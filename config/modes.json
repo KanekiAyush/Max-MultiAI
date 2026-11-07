@@ -1,0 +1,69 @@
+{
+  "gaming_mode": {
+    "aliases": [
+      "game mode", "gaming mode", "game on", "game time",
+      "let's play", "game chalu", "gaming shuru"
+    ],
+    "actions": [
+      {"type": "open_app", "target": "steam"},
+      {"type": "brightness", "value": 100},
+      {"type": "volume", "value": 75},
+      {"type": "close_app", "target": "chrome"},
+      {"type": "close_app", "target": "whatsapp"},
+      {"type": "silence_notifications", "value": true},
+      {"type": "power_plan", "target": "high_performance"}
+    ],
+    "notify": "🎮 Game Mode ON! Steam khul gaya, brightness full, notifications off. Have fun, Ayuu!",
+    "on_exit": [
+      {"type": "brightness", "value": 60},
+      {"type": "volume", "value": 50},
+      {"type": "silence_notifications", "value": false},
+      {"type": "power_plan", "target": "balanced"}
+    ]
+  },
+  "movie_mode": {
+    "aliases": ["movie mode", "movie time", "movie mood", "picture dekhna hai", "movie dekhna"],
+    "actions": [
+      {"type": "open_url", "target": "https://www.google.com"},
+      {"type": "brightness", "value": 70},
+      {"type": "volume", "value": 60},
+      {"type": "silence_notifications", "value": true}
+    ],
+    "notify": "🎬 Movie mode ON! Popcorn ready, Ayuu?",
+    "on_exit": [
+      {"type": "brightness", "value": 60},
+      {"type": "volume", "value": 50},
+      {"type": "silence_notifications", "value": false}
+    ]
+  },
+  "anime_mode": {
+    "aliases": ["anime mode", "anime time", "anime dekhna hai", "anime mood"],
+    "actions": [
+      {"type": "open_url", "target": "https://www.google.com"},
+      {"type": "brightness", "value": 70},
+      {"type": "volume", "value": 65},
+      {"type": "silence_notifications", "value": true}
+    ],
+    "notify": "🌸 Anime mode ON! Enjoy, Ayuu!",
+    "on_exit": [
+      {"type": "brightness", "value": 60},
+      {"type": "volume", "value": 50},
+      {"type": "silence_notifications", "value": false}
+    ]
+  },
+  "focus_mode": {
+    "aliases": ["focus mode", "study mode", "work mode", "padhai mode"],
+    "actions": [
+      {"type": "close_app", "target": "chrome"},
+      {"type": "close_app", "target": "whatsapp"},
+      {"type": "close_app", "target": "steam"},
+      {"type": "silence_notifications", "value": true},
+      {"type": "brightness", "value": 50}
+    ],
+    "notify": "📚 Focus mode ON! Distractions band, let's get to work Ayuu!",
+    "on_exit": [
+      {"type": "brightness", "value": 60},
+      {"type": "silence_notifications", "value": false}
+    ]
+  }
+}

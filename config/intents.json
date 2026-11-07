@@ -1,0 +1,27 @@
+{
+  "system_commands": [
+    "lock", "lock pc", "lock screen", "sleep", "go to sleep", 
+    "shutdown", "restart", "silent mode", "mute", "unmute"
+  ],
+  "search_triggers": [
+    "search", "google", "find", "dhundh", "khoj"
+  ],
+  "knowledge_triggers": [
+    "what", "who", "when", "where", "why", "how", "tell me", "explain",
+    "kya", "kaun", "kab", "kaha", "kyu", "kaise", "bata", "batao", "samjha",
+    "weather", "news", "trending", "score"
+  ],
+  "repeat_triggers": [
+    "repeat", "phir se bolo", "dobara", "wapas bolo", "say again", "again"
+  ],
+  "stop_triggers": [
+    "stop", "ruk", "chup", "quiet", "band karo", "bas"
+  ],
+  "mode_triggers": [
+    "mode", "movie mode", "anime mode", "game mode", "gaming mode"
+  ],
+  "confirmations": {
+    "yes": ["yes", "haan", "ha", "yep", "sure", "karo", "confirm", "ok"],
+    "no": ["no", "nahi", "na", "cancel", "band", "drop", "skip"]
+  }
+}

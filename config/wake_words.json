@@ -1,0 +1,7 @@
+{
+  "wake_words": ["hey max", "ok max", "max", "shravu"],
+  "vosk_model_path": "models/vosk-model-small-en-us-0.15",
+  "sample_rate": 16000,
+  "cooldown_seconds": 2,
+  "listen_timeout_seconds": 10
+}
