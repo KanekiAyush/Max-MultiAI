@@ -2,7 +2,7 @@
 import os
 import subprocess
 import pyautogui
-import psutil
+
 import threading
 import time
 from PIL import ImageGrab
@@ -10,7 +10,9 @@ from utils.logger import get_logger
 import pygetwindow as gw
 from PIL import ImageGrab
 import pyperclip
+import requests
 
+import psutil
 
 
 import pytesseract
@@ -72,6 +74,23 @@ def gaming_mode() -> str:
         log.error(f"Gaming mode failed: {e}")
         return "Gaming mode me thodi dikkat aayi."
 
+def movie_mode() -> str:
+    try:
+        os.system("start chrome https://net77.cc/home")
+        # Brightness kam kar do
+        subprocess.run("powershell (Get-WmiObject -Namespace root/WMI -Class WmiMonitorBrightnessMethods).WmiSetBrightness(1,50)", shell=True, capture_output=True)
+        return "Movie mode ON! Netflix khul gaya, lights dim kar di hain."
+    except Exception as e:
+        return f"Movie mode fail: {e}"
+
+def anime_mode() -> str:
+    try:
+        os.system("start chrome https://watchanimeworld.one/")
+        subprocess.run("powershell (Get-WmiObject -Namespace root/WMI -Class WmiMonitorBrightnessMethods).WmiSetBrightness(1,60)", shell=True, capture_output=True)
+        return "Anime mode ON! Crunchyroll open kar diya."
+    except Exception as e:
+        return f"Anime mode fail: {e}"
+
 def set_volume(action: str) -> str:
     try:
         if "up" in action or "increase" in action:
@@ -124,3 +143,49 @@ def set_timer(seconds: int, tts_callback) -> str:
         
     threading.Thread(target=timer_thread, daemon=True).start()
     return f"{seconds} second ka timer laga diya hai."
+
+def get_weather(city: str = "Mumbai") -> str:
+    """Fetch live weather using free wttr.in API."""
+    try:
+        # wttr.in ek free service hai jo bina API key ke kaam karti hai
+        response = requests.get(f"https://wttr.in/{city}?format=3", timeout=5)
+        if response.status_code == 200:
+            return response.text.strip()
+        return "Weather data nahi mil paya."
+    except Exception as e:
+        log.error(f"Weather error: {e}")
+        return "Internet issue ki wajah se weather nahi bata sakti."
+
+def write_file(filename: str, content: str) -> str:
+    try:
+        # File Desktop par banegi
+        desktop = os.path.join(os.path.expanduser("~"), "Desktop")
+        filepath = os.path.join(desktop, filename)
+        with open(filepath, "w", encoding="utf-8") as f:
+            f.write(content)
+        return f"File '{filename}' Desktop pe ban gayi hai, Ayuu."
+    except Exception as e:
+        return f"File nahi bana payi: {e}"
+
+def delete_file(filename: str) -> str:
+    try:
+        desktop = os.path.join(os.path.expanduser("~"), "Desktop")
+        filepath = os.path.join(desktop, filename)
+        if os.path.exists(filepath):
+            os.remove(filepath)
+            return f"File '{filename}' delete kar di hai."
+        return f"'{filename}' naam ki koi file Desktop pe nahi mili."
+    except Exception as e:
+        return f"File delete nahi kar payi: {e}"
+
+def get_daily_briefing() -> str:
+    battery = psutil.sensors_battery()
+    bat_percent = f"{battery.percent}%" if battery else "Unknown"
+    weather = get_weather()
+    
+    # Time nikalna
+    from datetime import datetime
+    current_time = datetime.now().strftime("%I:%M %p")
+    
+    briefing = f"Good morning Ayuu! Time ho raha hai {current_time}. Battery {bat_percent} pe hai. Aaj ka mausam: {weather}. Aaj ka din shubh ho!"
+    return briefing

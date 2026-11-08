@@ -41,3 +41,23 @@ def open_whatsapp_web() -> str:
     if _open_url("https://web.whatsapp.com"):
         return "WhatsApp Web open kar rahi hoon."
     return "WhatsApp Web open nahi kar payi."
+
+def open_incognito(query: str = "") -> str:
+    try:
+        if not query:
+            subprocess.Popen([CHROME_PATH, "--incognito"])
+            return "Secret mode ON. Incognito window open kar di hai."
+            
+        # Check if it's a URL (e.g., youtube.com) or a search query
+        if "." in query and " " not in query:
+            url = query if query.startswith("http") else f"https://{query}"
+            subprocess.Popen([CHROME_PATH, "--incognito", url])
+            return f"Secret mode me {query} open kar diya hai."
+        else:
+            encoded_query = urllib.parse.quote(query)
+            url = f"https://www.google.com/search?q={encoded_query}"
+            subprocess.Popen([CHROME_PATH, "--incognito", url])
+            return f"Secret mode me {query} search kar diya hai."
+    except Exception as e:
+        log.error(f"Incognito failed: {e}")
+        return "Secret mode open nahi kar payi."

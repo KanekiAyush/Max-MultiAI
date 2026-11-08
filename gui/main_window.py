@@ -13,9 +13,9 @@ class MainWindow(QMainWindow):
     """Main MAX window with arc reactor, chat, and controls."""
 
     text_submitted = Signal(str)
-    reply_ready_signal = Signal(str)
     mic_pressed = Signal()
     stop_pressed = Signal()
+    reply_ready_signal = Signal(str)
 
     STATE_LABELS = {
         "idle": "💤  Idle",

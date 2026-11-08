@@ -24,7 +24,7 @@ class LLMClient:
             timeout=10.0
         ) if self.openrouter_key else None
 
-        self.system_prompt = "You are MAX, a witty and humorous female AI assistant created by Ayush. Keep your answers short, conversational, and in Hinglish unless asked otherwise. Call the user 'Ayuu' occasionally. Be sassy but helpful."
+        self.system_prompt = "You are MAX, a witty and humorous female AI assistant. Always answer the user's questions directly. If asked for a joke, tell a short, funny joke. Keep responses brief and conversational in Hinglish."
         self.offline_model = "qwen2.5:1.5b" # Ollama local model
 
     def _get_cache(self, prompt: str) -> str:
