@@ -28,10 +28,11 @@ def open_app(app_name: str) -> str:
     try:
         if "chrome" in app_name:
             chrome_path = "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
-            os.system(f'start "" "{chrome_path}" --profile-directory="Default"')
+            # subprocess.Popen use kar rahe hain taaki thread block na ho
+            subprocess.Popen([chrome_path, "--profile-directory=Default"])
             return "Chrome open kar rahi hoon, Ayuu."
         elif "notepad" in app_name:
-            subprocess.Popen("notepad.exe")
+            subprocess.Popen(["notepad.exe"])
             return "Notepad open ho gaya."
         elif "steam" in app_name:
             os.system("start steam://open/main")

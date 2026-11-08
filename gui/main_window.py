@@ -3,7 +3,7 @@ from PySide6.QtWidgets import (
     QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
     QLabel, QLineEdit, QPushButton, QTextEdit,
 )
-from PySide6.QtCore import Qt, Signal
+from PySide6.QtCore import Qt, Signal, QTimer
 from PySide6.QtGui import QFont, QShortcut, QKeySequence
 
 from gui.arc_reactor import ArcReactorWidget
@@ -13,6 +13,7 @@ class MainWindow(QMainWindow):
     """Main MAX window with arc reactor, chat, and controls."""
 
     text_submitted = Signal(str)
+    reply_ready_signal = Signal(str)
     mic_pressed = Signal()
     stop_pressed = Signal()
 

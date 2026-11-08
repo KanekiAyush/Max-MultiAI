@@ -89,12 +89,13 @@ def run_gui() -> int:
         
         def _listen_thread():
             import time
-            time.sleep(0.4) 
+            # Vosk ko mic release karne ke liye 0.8 second ka time do
+            time.sleep(0.8) 
             
             def _on_processing():
                 wake_word_listener.stt_processing.emit()
                 
-            text = stt.listen(timeout=5, on_processing=_on_processing)
+            text = stt.listen(timeout=6, on_processing=_on_processing)
             wake_word_listener.stt_finished.emit(text)
             
         threading.Thread(target=_listen_thread, daemon=True).start()
@@ -113,19 +114,39 @@ def run_gui() -> int:
         
         window.set_state("thinking")
         
-        # Call Router (Decides to use Skill or LLM)
-        try:
-            reply = process_input(text)
-        except Exception as e:
-            log.error(f"Error in process_input: {e}")
-            reply = "Sorry Ayuu, mujhe samajh nahi aaya ya kuch error aa gaya."
+        def _process_thread():
+            try:
+                reply = process_input(text)
+            except Exception as e:
+                log.error(f"Error in process_input: {e}")
+                reply = "Sorry Ayuu, mujhe samajh nahi aaya ya kuch error aa gaya."
+                
+            # QTimer ki jagah window ke signal se update karo (Safe method)
+            window.reply_ready_signal.emit(reply)
+            
+        threading.Thread(target=_process_thread, daemon=True).start()
+
+    def _update_ui_with_reply(reply: str):
+        if not reply:
+            on_speech_done()
+            return
             
         window.append_chat("MAX", reply)
-        
         window.set_state("speaking")
         tts.speak(reply)
         
-        # TTS duration check
+        duration = max(2000, len(reply) * 60)
+        QTimer.singleShot(duration, on_speech_done)
+
+    def _update_ui_with_reply(reply: str):
+        if not reply:
+            on_speech_done()
+            return
+            
+        window.append_chat("MAX", reply)
+        window.set_state("speaking")
+        tts.speak(reply)
+        
         duration = max(2000, len(reply) * 60)
         QTimer.singleShot(duration, on_speech_done)
 
@@ -144,20 +165,30 @@ def run_gui() -> int:
         window.set_state("idle")
         wake_word_listener.resume()
 
+    # --- Smart Wait Logic ---
+    def check_tts_and_listen():
+        # Jab tak MAX bol rahi hai (ya audio generate ho raha hai), wait karo
+        if tts.is_speaking:
+            QTimer.singleShot(100, check_tts_and_listen)
+        else:
+            # Jab bolna khatam ho jaye, tab exact 1.5 second ka gap do taaki echo clear ho jaye
+            log.info("TTS finished. Waiting for echo to clear...")
+            QTimer.singleShot(1500, process_voice_input)
+
     def on_wake_word_detected():
         log.info("Wake word detected. Activating MAX.")
-        
-        # Sabse pehle current speech ko kill karo
-        tts.stop()
-        
+        tts.stop() 
         window.set_state("speaking")
+        
         addr = random.choice(["Ayuu", "Master"])
         tts.speak(f"Haan {addr}?")
         
-        QTimer.singleShot(1500, process_voice_input)
+        # Smart wait logic call karo
+        check_tts_and_listen()
 
     # Connect signals
     window.text_submitted.connect(handle_text)
+    window.reply_ready_signal.connect(_update_ui_with_reply)
     window.mic_pressed.connect(handle_mic)
     window.stop_pressed.connect(handle_stop)
     

@@ -16,7 +16,7 @@ class STTEngine:
         self.recognizer = sr.Recognizer()
         self.recognizer.energy_threshold = 300
         self.recognizer.dynamic_energy_threshold = True
-        self.recognizer.pause_threshold = 1.0 # 1 second silence pe rukega
+        self.recognizer.pause_threshold = 0.7 # 1 second silence pe rukega
         
         # 2. Vosk Fallback Setup (agar internet na ho)
         try:
@@ -26,15 +26,20 @@ class STTEngine:
             log.warning(f"Vosk fallback could not load: {e}")
             self.vosk_model = None
 
-    def listen(self, timeout=5, on_processing=None) -> str:
+    def listen(self, timeout=6, on_processing=None) -> str:
         log.info("🎤 Listening...")
         
-        # Primary: Google Speech Recognition
         try:
             with sr.Microphone() as source:
-                self.recognizer.adjust_for_ambient_noise(source, duration=0.5)
+                # Mic name print karo
+                log.info(f"Using Mic: {source.device_index}")
+                
+                # Wapas ambient noise adjust kar rahe hain (0.3 sec)
+                self.recognizer.adjust_for_ambient_noise(source, duration=0.3)
+                
                 try:
-                    audio = self.recognizer.listen(source, timeout=timeout, phrase_time_limit=10)
+                    # Timeout 6 sec, aur max 15 sec tak record karega
+                    audio = self.recognizer.listen(source, timeout=timeout, phrase_time_limit=15)
                 except sr.WaitTimeoutError:
                     log.info("Timeout: Koi aawaz nahi aayi.")
                     return ""
@@ -48,11 +53,10 @@ class STTEngine:
             return text
             
         except sr.UnknownValueError:
-            log.info("Google could not understand the audio.")
+            log.warning("Google could not understand the audio (shayad background noise ya echo tha).")
             return ""
         except sr.RequestError as e:
-            log.warning(f"Google API failed ({e}), switching to Vosk...")
-            # Fallback to Vosk (offline)
+            log.error(f"Google API failed ({e}), switching to Vosk...")
             if self.vosk_model:
                 return self._listen_vosk(on_processing)
             return ""
